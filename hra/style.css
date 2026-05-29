@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; user-select: none; }
+body { background-color: #030307; color: #fff; overflow: hidden; width: 100vw; height: 100vh; }
+canvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+.screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    background: rgba(3, 3, 7, 0.85); backdrop-filter: blur(8px);
+}
+.screen.active { opacity: 1; pointer-events: all; }
+#hud { background: none; backdrop-filter: none; justify-content: flex-start; padding: 30px; }
+
+.menu-dashboard { display: flex; width: 85%; max-width: 1100px; height: 75vh; gap: 40px; align-items: center; }
+.menu-left { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.menu-right { flex: 1.3; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px; }
+
+.leaderboard-card, .skin-card {
+    background: rgba(20, 20, 35, 0.6); border: 1px solid rgba(0, 255, 255, 0.15);
+    border-radius: 16px; padding: 30px; width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.skin-card { margin-top: 25px; }
+.panel-title { font-size: 1.1rem; color: #0ff; letter-spacing: 2px; margin-bottom: 20px; text-shadow: 0 0 10px rgba(0, 255, 255, 0.5); border-bottom: 1px solid rgba(0, 255, 255, 0.2); padding-bottom: 8px; }
+
+.game-title { font-size: 4.5rem; font-weight: 900; line-height: 0.95; letter-spacing: 6px; margin-bottom: 5px; color: #fff; }
+.gradient-text { background: linear-gradient(135deg, #00ffff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.6)); }
+.subtitle { color: #8a8ab0; font-size: 1rem; margin-bottom: 35px; }
+
+.play-btn {
+    width: 100%; max-width: 400px; padding: 20px !important; font-size: 1.8rem !important;
+    background: linear-gradient(90deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1)) !important;
+    border-image: linear-gradient(to right, #00ffff, #ff00ff) 1 !important;
+}
+.play-btn:hover { background: linear-gradient(95deg, #00ffff, #ff00ff) !important; color: #000 !important; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6) !important; transform: scale(1.02); }
+
+.neon-btn { background: transparent; color: #0ff; border: 2px solid #0ff; padding: 12px 30px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 8px; transition: all 0.2s ease; text-transform: uppercase; }
+.neon-btn:hover { background: #0ff; color: #000; box-shadow: 0 0 25px #0ff; transform: translateY(-2px); }
+.neon-btn.secondary { border-color: #ff00ff; color: #ff00ff; }
+.neon-btn.secondary:hover { background: #ff00ff; color: #000; box-shadow: 0 0 25px #ff00ff; }
+
+ul { width: 100%; }
+li { display: flex; justify-content: space-between; padding: 14px 10px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.02); border-radius: 6px; border-left: 3px solid #0ff; font-size: 1.1rem; }
+li:nth-child(1) { border-left-color: #ffcc00; background: rgba(255, 204, 0, 0.05); }
+
+#skinsContainer { display: flex; gap: 15px; }
+.skin-btn { width: 45px; height: 45px; border: 3px solid transparent; cursor: pointer; border-radius: 8px; transition: all 0.2s ease; }
+.skin-btn:hover { transform: scale(1.1); }
+.skin-btn.selected { border-color: #fff; box-shadow: 0 0 20px #fff; }
+
+.hud-top { display: flex; justify-content: space-between; width: 100%; font-size: 1.3rem; font-weight: bold; letter-spacing: 2px; }
+.level-display { color: #fff; }
+.score-display { color: #0ff; }
+.time-display { color: #ff00ff; }
+
+.powerup-alert { margin-top: 20px; font-size: 2.2rem; font-weight: 900; opacity: 0; transition: opacity 0.2s; text-align: center;}
+.font-large { font-size: 2.5rem; font-weight: bold; }
+.stats { margin: 20px 0; text-align: center; font-size: 1.2rem; }
+.gameover-controls { display: flex; gap: 15px; margin-top: 15px; }
+
+.shake-canvas { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shake { 10%, 90% { transform: translate3d(-3px, 3px, 0); } 20%, 80% { transform: translate3d(5px, -3px, 0); } 30%, 50%, 70% { transform: translate3d(-10px, 5px, 0); } 40%, 60% { transform: translate3d(10px, -5px, 0); } }

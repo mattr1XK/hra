@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Chase Survival</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="mainMenu" class="screen active">
+        <div class="menu-dashboard">
+            <div class="menu-left">
+                <div class="leaderboard-card">
+                    <h3 class="panel-title">🏆 TOP 5 REKORDY</h3>
+                    <ul id="mainLeaderboard"></ul>
+                </div>
+            </div>
+            <div class="menu-right">
+                <h1 class="game-title">NEON<br><span class="gradient-text">CHASE</span></h1>
+                <p class="subtitle">Preži vlnu neónových predátorov</p>
+                <button id="startBtn" class="neon-btn play-btn">SPUSTIŤ HRU</button>
+                <div class="skin-card">
+                    <h3 class="panel-title">VYBER SI SVOJ GLOW SKIN</h3>
+                    <div id="skinsContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hud" class="screen">
+        <div class="hud-top">
+            <div class="level-display">LEVEL: <span id="lvlVal" class="gradient-text">1</span></div>
+            <div class="score-display">SKÓRE: <span id="scoreVal">0</span> <span id="multiplierDisp" class="hidden">x2</span></div>
+            <div class="time-display">ČAS: <span id="timeVal">0.0</span>s</div>
+        </div>
+        <div id="powerupAlert" class="powerup-alert"></div>
+    </div>
+
+    <div id="gameOverScreen" class="screen">
+        <h1 class="neon-text text-danger shake-anim">YOU DIED</h1>
+        <div class="stats">
+            <p>Konečné skóre: <span id="finalScore" class="gradient-text font-large">0</span></p>
+            <p>Čas prežitia: <span id="finalTime">0</span> sekúnd</p>
+        </div>
+        <div class="leaderboard-container">
+            <h3>AKTUÁLNY LEADERBOARD</h3>
+            <ul id="gameOverLeaderboard"></ul>
+        </div>
+        <div class="gameover-controls">
+            <button id="retryBtn" class="neon-btn">SKÚSIŤ ZNOVU</button>
+            <button id="menuBtn" class="neon-btn secondary">HLAVNÉ MENU</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
