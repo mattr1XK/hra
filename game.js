@@ -4,7 +4,6 @@
  * =======================================================
  */
 
-// --- 1. ZÁKLADNÉ NASTAVENIA A CANVAS ---
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -15,7 +14,6 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// --- 2. HERNÉ PREMENNÉ A GLOBÁLNY STAV ---
 let gameState = 'menu';
 let lastTime = 0;
 let score = 0;
@@ -59,7 +57,7 @@ window.addEventListener('touchend', () => {
     if (useMotionControl) { targetX = null; targetY = null; }
 });
 
-// --- 3. INPUT MANAŽÉR ---
+// --- INPUT MANAŽÉR ---
 const keys = { 
     w: false, a: false, s: false, d: false, 
     ArrowUp: false, ArrowLeft: false, ArrowDown: false, ArrowRight: false 
@@ -73,7 +71,7 @@ window.addEventListener('keyup', (e) => {
     if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
 });
 
-// --- 4. KONFIGURÁCIA SKINOV A BONUSOV ---
+// --- KONFIGURÁCIA SKINOV A BONUSOV ---
 const skins = [
     { name: 'Neon Blue', color: '#00ffff' },
     { name: 'Cyber Pink', color: '#ff00ff' },
@@ -90,7 +88,6 @@ const powerupTypes = [
     { type: 'multiplier', color: '#ffff00', text: '2x SCORE!' }
 ];
 
-// --- 5. POMOCNÉ FUNKCIE (UTILITIES) ---
 function hexToRgba(hex, alpha) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (result) {
@@ -102,12 +99,12 @@ function hexToRgba(hex, alpha) {
     return `rgba(255, 255, 255, ${alpha})`;
 }
 
-// --- 6. AUDIO SYSTÉM (MP3 HUDBA + EFEKTY) ---
+// --- AUDIO SYSTÉM (MP3 HUDBA + EFEKTY) ---
 let audioCtx = null;
 
 const menuMusic = document.getElementById('bgm-menu');
 const gameMusic = document.getElementById('bgm-game');
-const secretMusic = document.getElementById('bgm-secret'); // Nová tajná hudba
+const secretMusic = document.getElementById('bgm-secret');
 
 let isAudioInitialized = false;
 
@@ -126,7 +123,7 @@ function updateMusicVolume() {
 function unlockAudio() {
     if (!isAudioInitialized) {
         updateMusicVolume();
-        if(menuMusic) menuMusic.play().catch(e => console.log("Menu audio error:", e));
+        if(menuMusic) menuMusic.play().catch(e => console.log(e));
         isAudioInitialized = true;
     }
 }
@@ -134,19 +131,19 @@ function unlockAudio() {
 function playMenuMusic() {
     if (gameMusic) { gameMusic.pause(); gameMusic.currentTime = 0; }
     if (secretMusic) { secretMusic.pause(); secretMusic.currentTime = 0; }
-    if (menuMusic) { menuMusic.play().catch(e => console.log("Menu audio error:", e)); }
+    if (menuMusic) { menuMusic.play().catch(e => console.log(e)); }
 }
 
 function playGameMusic() {
     if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
     if (secretMusic) { secretMusic.pause(); secretMusic.currentTime = 0; }
-    if (gameMusic) { gameMusic.play().catch(e => console.log("Game audio error:", e)); }
+    if (gameMusic) { gameMusic.play().catch(e => console.log(e)); }
 }
 
 function playSecretMusic() {
     if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
     if (gameMusic) { gameMusic.pause(); gameMusic.currentTime = 0; }
-    if (secretMusic) { secretMusic.play().catch(e => console.log("Secret audio error:", e)); }
+    if (secretMusic) { secretMusic.play().catch(e => console.log(e)); }
 }
 
 function initAudio() {
@@ -178,7 +175,7 @@ function playSound(type) {
     }
 }
 
-// --- 7. HERNÉ TRIEDY (OBJEKTY) ---
+// --- HERNÉ TRIEDY (OBJEKTY) ---
 
 class Player {
     constructor() {
@@ -570,7 +567,7 @@ class Particle {
     }
 }
 
-// --- 8. VYKRESLENIE POZADIA ---
+// --- VYKRESLENIE POZADIA ---
 function drawCyberGrid() {
     ctx.save();
     
@@ -608,7 +605,7 @@ function drawCyberGrid() {
     ctx.restore();
 }
 
-// --- 9. HERNÁ LOGIKA A KOLÍZIE ---
+// --- HERNÁ LOGIKA A KOLÍZIE ---
 function resetGame() {
     player = new Player(); 
     enemies = []; 
@@ -740,7 +737,7 @@ function checkCollisions() {
     }
 }
 
-// --- 10. HLAVNÁ SLUČKA A UI ---
+// --- HLAVNÁ SLUČKA A UI ---
 function updateHUD() {
     document.getElementById('scoreVal').innerText = Math.floor(score);
     document.getElementById('timeVal').innerText = survivalTime.toFixed(1);
@@ -750,11 +747,9 @@ function gameOver() {
     playSound('death'); 
     gameState = 'gameover';
     
-    // Zastavíme hernú hudbu a po chvíli pustíme opäť tú základnú Menu hudbu (nie tajnú)
-    if (gameMusic) {
-        gameMusic.pause();
-        gameMusic.currentTime = 0;
-    }
+    // Zastavíme všetky hudby a pustíme opäť Menu hudbu (nie TIKI TIKI)
+    if (gameMusic) gameMusic.pause();
+    if (secretMusic) secretMusic.pause();
     setTimeout(() => { playMenuMusic(); }, 1500);
     
     canvas.classList.add('shake-canvas'); 
@@ -862,7 +857,7 @@ function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
 }
 
-// --- 11. LEADERBOARD A INICIALIZÁCIA MENU ---
+// --- LEADERBOARD A INICIALIZÁCIA MENU ---
 function getTopScores() { 
     return JSON.parse(localStorage.getItem('neonChaseLeaderboard')) || []; 
 }
@@ -933,7 +928,7 @@ function setupSkins() {
 
 function startGame() { 
     initAudio(); 
-    playGameMusic(); // Odomkne a prepne hudbu na hernú
+    playGameMusic(); 
     
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
     document.getElementById('hud').classList.add('active'); 
@@ -946,7 +941,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('startBtn').addEventListener('click', startGame);
     
-    // Návrat do menu z GameOver - zahrá sa klasická menu hudba
     document.getElementById('retryBtn').addEventListener('click', startGame);
     document.getElementById('menuBtn').addEventListener('click', () => {
         playMenuMusic(); 
@@ -957,16 +951,16 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLevel = 1;
     });
 
-    // --- NAVIGÁCIA PRE NASTAVENIA ---
+    // --- FUNKČNOSŤ TLAČIDIEL NASTAVENÍ ---
     document.getElementById('openSettingsBtn').addEventListener('click', () => {
-        document.getElementById('settingsScreen').style.display = 'flex'; // Zobrazí nastavenia natvrdo v strede
+        document.getElementById('settingsScreen').style.display = 'flex';
     });
 
     document.getElementById('closeSettingsBtn').addEventListener('click', () => {
-        document.getElementById('settingsScreen').style.display = 'none'; // Schová nastavenia
+        document.getElementById('settingsScreen').style.display = 'none';
     });
 
-    // --- TAJNÁ HUDBA (Tlačidlo ...) ---
+    // --- TAJNÁ HUDBA ---
     document.getElementById('secretBtn').addEventListener('click', () => {
         playSecretMusic();
     });
