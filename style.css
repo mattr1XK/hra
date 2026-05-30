@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #03030c;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Hlavný sci-fi kontajner pre Menu a Game Over */
+.screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    max-width: 95vw;
+    padding: 40px;
+    background: rgba(6, 6, 16, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid rgba(0, 255, 255, 0.25);
+    border-radius: 12px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 255, 255, 0.05);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 999;
+    
+    /* Perfektné rozdelenie na 2 symetrické stĺpce */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+
+#gameOverScreen {
+    width: 420px;
+    grid-template-columns: 1fr;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    border-color: #00ffff;
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(0, 255, 255, 0.1);
+}
+
+/* Ľavá strana: Nadpis a Akcia */
+.menu-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+
+/* Pravá strana: Skiny a Rekordy pod sebou */
+.menu-right {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+}
+
+/* Prémiový neonový text pre názov hry */
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    line-height: 1.05;
+    color: #fff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #ff00ff;
+    animation: neonPulse 2.5s infinite alternate;
+}
+
+.menu-left p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 35px 0;
+    letter-spacing: 1px;
+}
+
+h3 {
+    font-family: 'Orbitron', sans-serif;
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: #ff00ff;
+    text-shadow: 0 0 8px rgba(2ff, 0, 255, 0.5);
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+    padding-bottom: 5px;
+}
+
+@keyframes neonPulse {
+    0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; }
+    100% { text-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, 0 0 50px #ff00ff; }
+}
+
+/* Masívne sci-fi hlavné tlačidlo */
+button {
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(45deg, #00ffff, #0055ff);
+    color: #000;
+    border: none;
+    padding: 16px 32px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    width: 100%;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px #00ffff, 0 0 15px #ff00ff;
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    color: #fff;
+}
+
+#menuBtn, #retryBtn {
+    background: transparent;
+    color: #00ffff;
+    border: 2px solid #00ffff;
+    margin-top: 12px;
+}
+#menuBtn:hover, #retryBtn:hover {
+    background: rgba(0, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* FIX: Výber skinov (izolované od veľkých buttonov) */
+#skinsContainer {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+/* Striktný štýl pre krúžky skinov */
+.skin-btn {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer;
+    border: 3px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: var(--skin-color);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skin-btn:hover {
+    transform: scale(1.1);
+}
+
+.skin-btn.selected {
+    border-color: #ffffff !important;
+    transform: scale(1.2);
+}
+
+/* Výsledková tabuľa napravo */
+.leaderboard {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.leaderboard li {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.05rem;
+    border-left: 3px solid #00ffff;
+}
+
+/* FIX: Kompletne prekopané HUD navrchu (Teraz stabilne svieti nad hrou) */
+#hud {
+    position: fixed;
+    top: 25px;
+    left: 25px;
+    right: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 9999; /* Vždy navrchu */
+}
+
+#hud.active { opacity: 1; }
+
+.hud-panel {
+    background: rgba(4, 4, 12, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    display: flex;
+    gap: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.hud-panel span {
+    color: #00ffff;
+    text-shadow: 0 0 8px #00ffff;
+    font-weight: bold;
+}
+
+#multiplierDisp {
+    color: #ffff00 !important;
+    text-shadow: 0 0 10px #ffff00 !important;
+    margin-left: 5px;
+}
+
+.hidden { display: none !important; }
+
+#powerupAlert {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+.skin-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    margin: 5px;
+}
+.skin-btn.selected {
+    border-color: #ffffff;
+    transform: scale(1.2);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}

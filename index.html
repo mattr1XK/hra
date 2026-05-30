@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Chase</title>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <audio id="bgm-menu" src="menu-music.mp3" loop></audio>
+<audio id="bgm-game" src="game-music.mp3" loop></audio>
+
+    <div id="mainMenu" class="screen active">
+        <div class="menu-left">
+            <h1>Neon<br>Chase</h1>
+            <p>Preži vlnu neónových predátorov</p>
+            <button id="startBtn">Spustiť hru</button>
+        </div>
+        
+        <div class="menu-right">
+            <div>
+                <h3>Vyber si Glow Skin</h3>
+                <div id="skinsContainer"></div>
+            </div>
+            <div>
+                <h3>Top 5 Rekordy</h3>
+                <ul id="mainLeaderboard" class="leaderboard"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="screen">
+        <div style="text-align: center; width: 100%;">
+            <h1 style="font-size: 2.5rem; text-shadow: 0 0 15px #ff0033;">Koniec Hry</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 20px;">Dosiahnuté skóre: <span id="finalScore" style="color:#00ffff; font-weight:bold;">0</span></p>
+            <p style="font-size: 1.1rem; margin-bottom: 30px;">Čas prežitia: <span id="finalTime" style="color:#ff00ff; font-weight:bold;">0.0</span>s</p>
+            
+            <h3>Tvoje maximum</h3>
+            <ul id="gameOverLeaderboard" class="leaderboard" style="margin-bottom: 25px;"></ul>
+            
+            <button id="retryBtn">Skúsiť znova</button>
+            <button id="menuBtn">Hlavné menu</button>
+        </div>
+    </div>
+
+    <div id="hud">
+        <div class="hud-panel">
+            <div>SCORE: <span id="scoreVal">0</span><span id="multiplierDisp" class="hidden">x2</span></div>
+            <div>TIME: <span id="timeVal">0.0</span>s</div>
+        </div>
+        <div class="hud-panel">
+            <div>PHASE: <span id="lvlVal">1</span></div>
+        </div>
+    </div>
+
+    <div id="powerupAlert"></div>
+    
+    <canvas id="gameCanvas"></canvas>
+
+    <script src="game.js"></script>
+</body>
+</html>
