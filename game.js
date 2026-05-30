@@ -41,6 +41,24 @@ let activeEffects = {
     speed: 0 
 };
 
+// --- PREMENNÉ PRE OVLÁDANIE MYŠOU A DOTYKOM ---
+let targetX = null;
+let targetY = null;
+let useMotionControl = false;
+
+window.addEventListener('mousemove', (e) => {
+    if (useMotionControl) { targetX = e.clientX; targetY = e.clientY; }
+});
+window.addEventListener('touchmove', (e) => {
+    if (useMotionControl && e.touches.length > 0) { targetX = e.touches[0].clientX; targetY = e.touches[0].clientY; }
+}, {passive: true});
+window.addEventListener('touchstart', (e) => {
+    if (useMotionControl && e.touches.length > 0) { targetX = e.touches[0].clientX; targetY = e.touches[0].clientY; }
+}, {passive: true});
+window.addEventListener('touchend', () => {
+    if (useMotionControl) { targetX = null; targetY = null; }
+});
+
 // --- 3. INPUT MANAŽÉR ---
 const keys = { 
     w: false, a: false, s: false, d: false, 
@@ -87,45 +105,50 @@ function hexToRgba(hex, alpha) {
 // --- 6. AUDIO SYSTÉM (MP3 HUDBA + EFEKTY) ---
 let audioCtx = null;
 
-// HTML Audio elementy pre hudbu
 const menuMusic = document.getElementById('bgm-menu');
 const gameMusic = document.getElementById('bgm-game');
-
-// Zníženie hlasitosti hudby, aby neprehlušila zvukové efekty
-if (menuMusic) menuMusic.volume = 0.5;
-if (gameMusic) gameMusic.volume = 0.4;
+const secretMusic = document.getElementById('bgm-secret'); // Nová tajná hudba
 
 let isAudioInitialized = false;
 
-// Funkcia pre prvé odomknutie hudby
+function getGlobalVolume() {
+    const volSlider = document.getElementById('volumeSlider');
+    return volSlider ? parseFloat(volSlider.value) : 0.4;
+}
+
+function updateMusicVolume() {
+    let v = getGlobalVolume();
+    if(menuMusic) menuMusic.volume = v;
+    if(gameMusic) gameMusic.volume = v;
+    if(secretMusic) secretMusic.volume = v;
+}
+
 function unlockAudio() {
     if (!isAudioInitialized) {
+        updateMusicVolume();
         if(menuMusic) menuMusic.play().catch(e => console.log("Menu audio error:", e));
         isAudioInitialized = true;
     }
 }
 
 function playMenuMusic() {
-    if (gameMusic) {
-        gameMusic.pause();
-        gameMusic.currentTime = 0; 
-    }
-    if (menuMusic) {
-        menuMusic.play().catch(e => console.log("Menu audio error:", e));
-    }
+    if (gameMusic) { gameMusic.pause(); gameMusic.currentTime = 0; }
+    if (secretMusic) { secretMusic.pause(); secretMusic.currentTime = 0; }
+    if (menuMusic) { menuMusic.play().catch(e => console.log("Menu audio error:", e)); }
 }
 
 function playGameMusic() {
-    if (menuMusic) {
-        menuMusic.pause();
-        menuMusic.currentTime = 0;
-    }
-    if (gameMusic) {
-        gameMusic.play().catch(e => console.log("Game audio error:", e));
-    }
+    if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
+    if (secretMusic) { secretMusic.pause(); secretMusic.currentTime = 0; }
+    if (gameMusic) { gameMusic.play().catch(e => console.log("Game audio error:", e)); }
 }
 
-// Pôvodné zvukové efekty pre hru (cez Oscillator)
+function playSecretMusic() {
+    if (menuMusic) { menuMusic.pause(); menuMusic.currentTime = 0; }
+    if (gameMusic) { gameMusic.pause(); gameMusic.currentTime = 0; }
+    if (secretMusic) { secretMusic.play().catch(e => console.log("Secret audio error:", e)); }
+}
+
 function initAudio() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -141,28 +164,17 @@ function playSound(type) {
     gainNode.connect(audioCtx.destination);
 
     const now = audioCtx.currentTime;
+    let vol = getGlobalVolume();
 
     if (type === 'pickup') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(400, now);
-        osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
-        gainNode.gain.setValueAtTime(0.2, now);
-        osc.start(now); 
-        osc.stop(now + 0.1);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+        gainNode.gain.setValueAtTime(0.4 * vol, now); osc.start(now); osc.stop(now + 0.1);
     } else if (type === 'death') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, now);
-        osc.frequency.exponentialRampToValueAtTime(30, now + 0.5);
-        gainNode.gain.setValueAtTime(0.4, now);
-        osc.start(now); 
-        osc.stop(now + 0.5);
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(120, now); osc.frequency.exponentialRampToValueAtTime(30, now + 0.5);
+        gainNode.gain.setValueAtTime(0.8 * vol, now); osc.start(now); osc.stop(now + 0.5);
     } else if (type === 'blast') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(160, now);
-        osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
-        gainNode.gain.setValueAtTime(0.2, now);
-        osc.start(now); 
-        osc.stop(now + 0.15);
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(160, now); osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+        gainNode.gain.setValueAtTime(0.4 * vol, now); osc.start(now); osc.stop(now + 0.15);
     }
 }
 
@@ -182,15 +194,25 @@ class Player {
         let dx = 0; 
         let dy = 0;
 
-        if (keys['w'] || keys['ArrowUp']) dy -= 1;
-        if (keys['s'] || keys['ArrowDown']) dy += 1;
-        if (keys['a'] || keys['ArrowLeft']) dx -= 1;
-        if (keys['d'] || keys['ArrowRight']) dx += 1;
+        if (useMotionControl && targetX !== null && targetY !== null) {
+            let distX = targetX - this.x;
+            let distY = targetY - this.y;
+            let distance = Math.sqrt(distX * distX + distY * distY);
+            
+            if (distance > 5) {
+                dx = distX / distance;
+                dy = distY / distance;
+            }
+        } else {
+            if (keys['w'] || keys['ArrowUp']) dy -= 1;
+            if (keys['s'] || keys['ArrowDown']) dy += 1;
+            if (keys['a'] || keys['ArrowLeft']) dx -= 1;
+            if (keys['d'] || keys['ArrowRight']) dx += 1;
 
-        if (dx !== 0 && dy !== 0) { 
-            const length = Math.sqrt(dx * dx + dy * dy); 
-            dx /= length; 
-            dy /= length; 
+            if (dx !== 0 && dy !== 0) { 
+                const length = Math.sqrt(dx * dx + dy * dy); 
+                dx /= length; dy /= length; 
+            }
         }
 
         this.x += dx * speed * dt; 
@@ -206,18 +228,11 @@ class Player {
 
     draw() {
         ctx.save(); 
-        ctx.shadowBlur = 20; 
-        ctx.shadowColor = this.color; 
-        ctx.fillStyle = this.color;
-        
+        ctx.shadowBlur = 20; ctx.shadowColor = this.color; ctx.fillStyle = this.color;
         ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
-        
         if (activeEffects.shield > 0) { 
-            ctx.beginPath(); 
-            ctx.arc(this.x, this.y, this.size + 10, 0, Math.PI * 2); 
-            ctx.strokeStyle = '#00ffff'; 
-            ctx.lineWidth = 3; 
-            ctx.stroke(); 
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size + 10, 0, Math.PI * 2); 
+            ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3; ctx.stroke(); 
         }
         ctx.restore();
     }
@@ -251,20 +266,11 @@ class Enemy {
         const globalPalette = ['#ff3333', '#00ffcc', '#ff00ff', '#ffff00', '#00ff00', '#9900ff', '#ff8800'];
         this.color = globalPalette[Math.floor(Math.random() * globalPalette.length)];
 
-        if (this.type === 'cube') { 
-            this.baseSpeed = 60 + Math.random() * 15 + (currentLevel * 2.5); 
-        } else if (this.type === 'circle') { 
-            this.baseSpeed = 45 + Math.random() * 15 + (currentLevel * 2); 
-            this.shootTimer = Math.random() * 2; 
-        } else if (this.type === 'triangle') { 
-            this.baseSpeed = 55 + (currentLevel * 3); 
-            this.dashState = 'walk'; 
-            this.stateTimer = 1.5; 
-        } else if (this.type === 'star') { 
-            this.baseSpeed = 95 + (currentLevel * 2); 
-        } else if (this.type === 'seeker') { 
-            this.baseSpeed = 110 + (currentLevel * 2.5); 
-        }
+        if (this.type === 'cube') { this.baseSpeed = 60 + Math.random() * 15 + (currentLevel * 2.5); } 
+        else if (this.type === 'circle') { this.baseSpeed = 45 + Math.random() * 15 + (currentLevel * 2); this.shootTimer = Math.random() * 2; } 
+        else if (this.type === 'triangle') { this.baseSpeed = 55 + (currentLevel * 3); this.dashState = 'walk'; this.stateTimer = 1.5; } 
+        else if (this.type === 'star') { this.baseSpeed = 95 + (currentLevel * 2); } 
+        else if (this.type === 'seeker') { this.baseSpeed = 110 + (currentLevel * 2.5); }
     }
 
     update(dt, index) {
@@ -744,7 +750,7 @@ function gameOver() {
     playSound('death'); 
     gameState = 'gameover';
     
-    // Zastavíme hernú hudbu a po chvíli pustíme menu hudbu
+    // Zastavíme hernú hudbu a po chvíli pustíme opäť tú základnú Menu hudbu (nie tajnú)
     if (gameMusic) {
         gameMusic.pause();
         gameMusic.currentTime = 0;
@@ -784,13 +790,11 @@ function gameLoop(timestamp) {
         
         checkLevelProgress();
 
-        // Plné spawnovanie nepriateľov (všetkých 5 typov)
         enemySpawnTimer -= dt;
         if (enemySpawnTimer <= 0) {
             let type = 'cube'; 
             let rand = Math.random();
             
-            // Už v 1. leveli máš mix, bude to hneď od začiatku akcia!
             if (currentLevel === 1) {
                 type = rand > 0.5 ? 'circle' : 'cube';
             } else {
@@ -929,7 +933,7 @@ function setupSkins() {
 
 function startGame() { 
     initAudio(); 
-    playGameMusic(); 
+    playGameMusic(); // Odomkne a prepne hudbu na hernú
     
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
     document.getElementById('hud').classList.add('active'); 
@@ -941,6 +945,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', unlockAudio, { once: true });
 
     document.getElementById('startBtn').addEventListener('click', startGame);
+    
+    // Návrat do menu z GameOver - zahrá sa klasická menu hudba
     document.getElementById('retryBtn').addEventListener('click', startGame);
     document.getElementById('menuBtn').addEventListener('click', () => {
         playMenuMusic(); 
@@ -950,6 +956,48 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState = 'menu'; 
         currentLevel = 1;
     });
+
+    // --- NAVIGÁCIA PRE NASTAVENIA ---
+    document.getElementById('openSettingsBtn').addEventListener('click', () => {
+        document.getElementById('settingsScreen').style.display = 'flex'; // Zobrazí nastavenia natvrdo v strede
+    });
+
+    document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+        document.getElementById('settingsScreen').style.display = 'none'; // Schová nastavenia
+    });
+
+    // --- TAJNÁ HUDBA (Tlačidlo ...) ---
+    document.getElementById('secretBtn').addEventListener('click', () => {
+        playSecretMusic();
+    });
+
+    // --- HLASITOSŤ ---
+    const volSlider = document.getElementById('volumeSlider');
+    if (volSlider) {
+        let savedVol = localStorage.getItem('neonVolume');
+        if (savedVol !== null) { volSlider.value = savedVol; }
+        updateMusicVolume(); 
+        
+        volSlider.addEventListener('input', () => {
+            updateMusicVolume();
+            localStorage.setItem('neonVolume', volSlider.value);
+        });
+    }
+
+    // --- OVLÁDANIE MYŠ/DOTYK ---
+    const motionToggle = document.getElementById('motionToggle');
+    if (motionToggle) {
+        let savedMotion = localStorage.getItem('neonMotion');
+        if (savedMotion !== null) {
+            useMotionControl = savedMotion === 'true';
+            motionToggle.checked = useMotionControl;
+        }
+        motionToggle.addEventListener('change', (e) => {
+            useMotionControl = e.target.checked;
+            localStorage.setItem('neonMotion', useMotionControl);
+            if (!useMotionControl) { targetX = null; targetY = null; }
+        });
+    }
 
     setupSkins(); 
     renderLeaderboard('mainLeaderboard'); 

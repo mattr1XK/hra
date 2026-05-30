@@ -9,13 +9,15 @@
 </head>
 <body>
     <audio id="bgm-menu" src="menu-music.mp3" loop></audio>
-<audio id="bgm-game" src="game-music.mp3" loop></audio>
+    <audio id="bgm-game" src="game-music.mp3" loop></audio>
+    <audio id="bgm-secret" src="TIKI TIKI.mp3" loop></audio>
 
     <div id="mainMenu" class="screen active">
         <div class="menu-left">
             <h1>Neon<br>Chase</h1>
             <p>Preži vlnu neónových predátorov</p>
             <button id="startBtn">Spustiť hru</button>
+            <button id="openSettingsBtn" style="margin-top: 15px; border: 2px solid rgba(0, 255, 255, 0.4); background: rgba(0,0,0,0.5); color: #00ffff;">Nastavenia</button>
         </div>
         
         <div class="menu-right">
@@ -27,6 +29,26 @@
                 <h3>Top 5 Rekordy</h3>
                 <ul id="mainLeaderboard" class="leaderboard"></ul>
             </div>
+        </div>
+    </div>
+
+    <div id="settingsScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: rgba(10, 10, 20, 0.95); padding: 40px; border: 2px solid #00ffff; border-radius: 15px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); width: 400px; text-align: center;">
+            <h2 style="font-size: 2.5rem; color: #00ffff; text-shadow: 0 0 15px #00ffff; margin-bottom: 30px;">NASTAVENIA</h2>
+            
+            <div style="margin-bottom: 25px; text-align: left;">
+                <label for="volumeSlider" style="display: block; font-size: 1.2rem; color: #fff; margin-bottom: 10px;">Hlasitosť hry:</label>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.4" style="width: 100%; cursor: pointer;">
+            </div>
+            
+            <div style="margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                <label for="motionToggle" style="font-size: 1.2rem; color: #fff;">Ovládanie myšou:</label>
+                <input type="checkbox" id="motionToggle" style="width: 25px; height: 25px; cursor: pointer;">
+            </div>
+
+            <button id="secretBtn" class="big-red-btn">...</button>
+            
+            <button id="closeSettingsBtn" style="margin-top: 25px; width: 100%; padding: 12px; font-size: 1.2rem; background: transparent; border: 2px solid #555; color: #ccc; cursor: pointer; border-radius: 5px; transition: 0.2s;">X Späť do menu</button>
         </div>
     </div>
 

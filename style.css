@@ -91,7 +91,7 @@ h3 {
     font-size: 1.1rem;
     letter-spacing: 2px;
     color: #ff00ff;
-    text-shadow: 0 0 8px rgba(2ff, 0, 255, 0.5);
+    text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
     text-transform: uppercase;
     border-bottom: 1px solid rgba(255, 0, 255, 0.2);
     padding-bottom: 5px;
@@ -248,17 +248,155 @@ button:hover {
     text-transform: uppercase;
     letter-spacing: 3px;
 }
-.skin-btn {
+
+
+/* Tlačidlo Nastavení (Hover) */
+#openSettingsBtn:hover {
+    background: rgba(0, 255, 255, 0.2) !important;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important;
+}
+#closeSettingsBtn:hover {
+    border-color: #fff !important;
+    color: #fff !important;
+}
+
+/* Veľké červené YouTube Tlačidlo v Nastaveniach */
+.big-red-btn {
+    display: block;
+    width: 100%;
+    background: #ff0000;
+    color: #ffffff;
+    border: 3px solid #ff4444;
+    padding: 15px;
+    font-size: 3.5rem;
+    line-height: 0.5;
+    font-weight: 900;
+    border-radius: 8px;
+    box-shadow: 0 0 25px #ff0000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: none;
+    letter-spacing: 5px;
+}
+
+.big-red-btn:hover {
+    background: #cc0000;
+    box-shadow: 0 0 45px #ff0000;
+    transform: scale(1.05);
+}
+
+
+/* --- ŠTÝLOVANIE ATRAKTÍVNEHO NEÓNOVÉHO SLIDERA (HLASITOSŤ) --- */
+
+/* Základný kontajner slidera (reset prehliadača) */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+    margin: 15px 0;
+}
+
+/* TRACK - Čiara, po ktorej jazdí jazdec (Chrome, Safari, Edge, Opera) */
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: linear-gradient(to right, #00ffff 0%, #ff00ff 100%);
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5), 0 0 8px rgba(0, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* THUMB - Jazdec, ktorým sa hýbe (Chrome, Safari, Edge, Opera) */
+input[type="range"]::-webkit-slider-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 4px solid #00ffff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -8px; 
+    box-shadow: 0 0 15px #00ffff, 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+    transform: scale(1.15);
+    box-shadow: 0 0 25px #00ffff, 0 0 45px rgba(0, 255, 255, 0.8), inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* TRACK - Firefox */
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: linear-gradient(to right, #00ffff 0%, #ff00ff 100%);
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5), 0 0 8px rgba(0, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* THUMB - Firefox */
+input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 4px solid #00ffff;
+    cursor: pointer;
+    box-shadow: 0 0 15px #00ffff, 0 0 30px rgba(0, 255, 255, 0.6), inset 0 0 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease;
+}
+
+input[type="range"]::-moz-range-thumb:active {
+    transform: scale(1.15);
+}
+
+/* --- ŠTÝLOVANIE ATRAKTÍVNEHO CHECKBOXU (OVLÁDANIE) --- */
+
+input[type="checkbox"]#motionToggle {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 0;
+    font: inherit;
+    color: #00ffff;
     width: 30px;
     height: 30px;
-    border-radius: 50%;
-    border: 2px solid transparent;
+    border: 2px solid rgba(0, 255, 255, 0.5);
+    border-radius: 5px;
+    display: grid;
+    place-content: center;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-    margin: 5px;
+    transition: 0.1s;
+    box-shadow: inset 0 0 5px transparent;
 }
-.skin-btn.selected {
-    border-color: #ffffff;
-    transform: scale(1.2);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+
+input[type="checkbox"]#motionToggle:checked {
+    background-color: rgba(0, 255, 255, 0.2);
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+input[type="checkbox"]#motionToggle::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    transform: scale(0);
+    transition: 0.1s transform ease-in-out;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    background-color: #ffffff;
+    box-shadow: 0 0 5px #fff;
+}
+
+input[type="checkbox"]#motionToggle:checked::before {
+    transform: scale(1);
+}
+
+input[type="checkbox"]#motionToggle:hover {
+    border-color: #00ffff;
+    background-color: rgba(0, 255, 255, 0.1);
 }
